@@ -16,7 +16,7 @@
 $ ssh isucon10-1
 $ sudo su iscuon
 $ cd /home/isucon/isuumo/bench
-$ ./bench http://instance.ip
+$ ./bench --target-url http://instance.ip
 ```
 
 ## alp実行
