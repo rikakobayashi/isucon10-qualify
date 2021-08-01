@@ -483,11 +483,15 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
     // const estatesInPolygon = [];
     // for (const estate of estates) {
     const estateIds = estates.map(estate => estate.id)
-    // const point = util.format(
-    //   "'POINT(%f %f)'",
-    //   estate.latitude,
-    //   estate.longitude
-    // );
+    estateIds.push(0)
+    const point = util.format(
+      "'POINT(%f %f)'",
+      35.58748208391729,
+      139.404504099117
+    );
+
+    console.log({ point })
+
     const sql =
       "SELECT * FROM estate WHERE estate.id in (%s) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat(\"POINT(\", estate.latitude, \" \",estate.longitude, \")\"))) ORDER BY popularity DESC, id ASC";
     const coordinatesToText = util.format(
@@ -501,6 +505,7 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
     // const sqlstr = util.format(sql, coordinatesToText, point);
     const sqlstr = util.format(sql, estateIds.join(","), coordinatesToText);
     // console.log({sqlstr})
+    console.log({ sqlstr})
     const estatesInPolygon = await query(sqlstr);
     // if ( && Object.keys(e).length > 0) {
     //   estatesInPolygon.push(e);
