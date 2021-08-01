@@ -18,7 +18,8 @@ CREATE TABLE isuumo.estate
     door_height INTEGER             NOT NULL,
     door_width  INTEGER             NOT NULL,
     features    VARCHAR(64)         NOT NULL,
-    popularity  INTEGER             NOT NULL
+    popularity  INTEGER             NOT NULL,
+    popularity_desc INTEGER         NOT NULL
 );
 
 ALTER TABLE isuumo.estate ADD INDEX esate_popularity(popularity);
@@ -33,8 +34,8 @@ ALTER TABLE isuumo.estate ADD INDEX esate_rent(rent);
 ALTER TABLE isuumo.estate ADD INDEX esate_features(features);
 
 -- -popularity
-ALTER TABLE isuumo.estate ADD COLUMN popularity_desc INTEGER;
-UPDATE isuumo.estate SET popularity_desc = -1 * popularity;
+-- ALTER TABLE isuumo.estate ADD COLUMN popularity_desc INTEGER;
+-- UPDATE isuumo.estate SET popularity_desc = -1 * popularity;
 ALTER TABLE isuumo.estate ADD INDEX estate_popularity_id(popularity_desc, id);
 
 

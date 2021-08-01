@@ -1,0 +1,1 @@
+UPDATE isuumo.estate SET popularity_desc = -1 * popularity;
