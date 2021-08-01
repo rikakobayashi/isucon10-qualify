@@ -15,6 +15,7 @@ const promisify = util.promisify;
 const exec = promisify(cp.exec);
 const chairSearchCondition = require("../fixture/chair_condition.json");
 const estateSearchCondition = require("../fixture/estate_condition.json");
+require('dotenv').config();
 
 const PORT = process.env.PORT ?? 1323;
 const LIMIT = 20;
@@ -273,16 +274,16 @@ app.get("/api/chair/:id", async (req, res, next) => {
 app.post("/api/chair/buy/:id", async (req, res, next) => {
   const getConnection = promisify(db.getConnection.bind(db));
   const connection = await getConnection();
-  const beginTransaction = promisify(connection.beginTransaction.bind(connection));
+  const beginTransaction = promisify(
+    connection.beginTransaction.bind(connection)
+  );
   const query = promisify(connection.query.bind(connection));
   const commit = promisify(connection.commit.bind(connection));
   const rollback = promisify(connection.rollback.bind(connection));
   try {
     const id = req.params.id;
     await beginTransaction();
-    const [
-      chair,
-    ] = await query(
+    const [chair] = await query(
       "SELECT * FROM chair WHERE id = ? AND stock > 0 FOR UPDATE",
       [id]
     );
@@ -481,29 +482,38 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
       ]
     );
 
-    const estatesInPolygon = [];
-    for (const estate of estates) {
-      const point = util.format(
-        "'POINT(%f %f)'",
-        estate.latitude,
-        estate.longitude
-      );
-      const sql =
-        "SELECT * FROM estate WHERE id = ? AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))";
-      const coordinatesToText = util.format(
-        "'POLYGON((%s))'",
-        coordinates
-          .map((coordinate) =>
-            util.format("%f %f", coordinate.latitude, coordinate.longitude)
-          )
-          .join(",")
-      );
-      const sqlstr = util.format(sql, coordinatesToText, point);
-      const [e] = await query(sqlstr, [estate.id]);
-      if (e && Object.keys(e).length > 0) {
-        estatesInPolygon.push(e);
-      }
-    }
+    // const estatesInPolygon = [];
+    // for (const estate of estates) {
+    const estateIds = estates.map(estate => estate.id)
+    estateIds.push(0)
+    const point = util.format(
+      "'POINT(%f %f)'",
+      35.58748208391729,
+      139.404504099117
+    );
+
+    // console.log({ point })
+    process.stdout.write(JSON.stringify({point}))
+
+    const sql =
+      "SELECT * FROM estate WHERE estate.id in (%s) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat(\"POINT(\", estate.latitude, \" \",estate.longitude, \")\"))) ORDER BY popularity DESC, id ASC";
+    const coordinatesToText = util.format(
+      "'POLYGON((%s))'",
+      coordinates
+        .map((coordinate) =>
+          util.format("%f %f", coordinate.latitude, coordinate.longitude)
+        )
+        .join(",")
+    );
+    // const sqlstr = util.format(sql, coordinatesToText, point);
+    const sqlstr = util.format(sql, estateIds.join(","), coordinatesToText);
+    // console.log({sqlstr})
+    console.log({ sqlstr})
+    const estatesInPolygon = await query(sqlstr);
+    // if ( && Object.keys(e).length > 0) {
+    //   estatesInPolygon.push(e);
+    // }
+    // }
 
     const results = {
       estates: [],
@@ -571,7 +581,9 @@ app.get("/api/recommended_estate/:id", async (req, res, next) => {
 app.post("/api/chair", upload.single("chairs"), async (req, res, next) => {
   const getConnection = promisify(db.getConnection.bind(db));
   const connection = await getConnection();
-  const beginTransaction = promisify(connection.beginTransaction.bind(connection));
+  const beginTransaction = promisify(
+    connection.beginTransaction.bind(connection)
+  );
   const query = promisify(connection.query.bind(connection));
   const commit = promisify(connection.commit.bind(connection));
   const rollback = promisify(connection.rollback.bind(connection));
@@ -599,7 +611,9 @@ app.post("/api/chair", upload.single("chairs"), async (req, res, next) => {
 app.post("/api/estate", upload.single("estates"), async (req, res, next) => {
   const getConnection = promisify(db.getConnection.bind(db));
   const connection = await getConnection();
-  const beginTransaction = promisify(connection.beginTransaction.bind(connection));
+  const beginTransaction = promisify(
+    connection.beginTransaction.bind(connection)
+  );
   const query = promisify(connection.query.bind(connection));
   const commit = promisify(connection.commit.bind(connection));
   const rollback = promisify(connection.rollback.bind(connection));

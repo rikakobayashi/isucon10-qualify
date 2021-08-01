@@ -35,7 +35,7 @@ services:
       MYSQL_USER: isucon
       MYSQL_PASS: isucon
       MYSQL_DBNAME: isuumo
-    command: ["npm", "start"]
+    command: ["npm", "run", "dev"]
 
   nginx:
     # build: ./webapp/nginx
