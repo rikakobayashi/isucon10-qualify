@@ -4,4 +4,6 @@
 **/*.back.*
 
 node_modules
+
 bower_components
+webapp/mysql/db/init.sh
