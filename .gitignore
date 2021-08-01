@@ -2,6 +2,7 @@
 *.log
 **/*.backup.*
 **/*.back.*
+**/.env
 
 node_modules
 

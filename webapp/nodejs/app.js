@@ -15,6 +15,7 @@ const promisify = util.promisify;
 const exec = promisify(cp.exec);
 const chairSearchCondition = require("../fixture/chair_condition.json");
 const estateSearchCondition = require("../fixture/estate_condition.json");
+require('dotenv').config();
 
 const PORT = process.env.PORT ?? 1323;
 const LIMIT = 20;
