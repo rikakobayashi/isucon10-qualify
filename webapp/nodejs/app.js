@@ -490,7 +490,8 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
       139.404504099117
     );
 
-    console.log({ point })
+    // console.log({ point })
+    process.stdout.write(JSON.stringify({point}))
 
     const sql =
       "SELECT * FROM estate WHERE estate.id in (%s) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat(\"POINT(\", estate.latitude, \" \",estate.longitude, \")\"))) ORDER BY popularity DESC, id ASC";
