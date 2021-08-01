@@ -8,7 +8,7 @@
     "build": "next build",
     "prod": "cross-env ENV=production node server.js",
     "start": "next start",
-    "export": "next build && next export",
+    "export": "npm install && next build && next export",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
