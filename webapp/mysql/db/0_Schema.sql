@@ -32,6 +32,11 @@ ALTER TABLE isuumo.estate ADD INDEX esate_door_width(door_width);
 ALTER TABLE isuumo.estate ADD INDEX esate_rent(rent);
 ALTER TABLE isuumo.estate ADD INDEX esate_features(features);
 
+-- -popularity
+ALTER TABLE isuumo.estate ADD COLUMN popularity_desc INTEGER;
+UPDATE isuumo.estate SET popularity_desc = -1 * popularity;
+ALTER TABLE isuumo.estate ADD INDEX estate_popularity_id(popularity_desc, id);
+
 
 CREATE TABLE isuumo.chair
 (
@@ -63,3 +68,5 @@ ALTER TABLE isuumo.chair ADD INDEX chair_color(color);
 ALTER TABLE isuumo.chair ADD INDEX chair_features(features);
 ALTER TABLE isuumo.chair ADD INDEX chair_stock(stock);
 ALTER TABLE isuumo.chair ADD INDEX chair_popularity(popularity);
+
+
