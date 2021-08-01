@@ -41,7 +41,8 @@ app.post("/initialize", async (req, res, next) => {
     const dbfiles = [
       "0_Schema.sql",
       "1_DummyEstateData.sql",
-      "2_DummyChairData.sql"
+      "2_DummyChairData.sql",
+      "3_add_column_popularity_desc.sql"
     ];
     const execfiles = dbfiles.map((file) => path.join(dbdir, file));
     for (const execfile of execfiles) {
@@ -220,7 +221,7 @@ app.get("/api/chair/search", async (req, res, next) => {
 
   const sqlprefix = "SELECT * FROM chair WHERE ";
   const searchCondition = searchQueries.join(" AND ");
-  const limitOffset = " ORDER BY popularity DESC, id ASC LIMIT ? OFFSET ?";
+  const limitOffset = " ORDER BY popularity_desc ASC, id ASC LIMIT ? OFFSET ?";
   const countprefix = "SELECT COUNT(*) as count FROM chair WHERE ";
 
   const getConnection = promisify(db.getConnection.bind(db));
@@ -401,7 +402,7 @@ app.get("/api/estate/search", async (req, res, next) => {
 
   const sqlprefix = "SELECT * FROM estate WHERE ";
   const searchCondition = searchQueries.join(" AND ");
-  const limitOffset = " ORDER BY popularity DESC, id ASC LIMIT ? OFFSET ?";
+  const limitOffset = " ORDER BY popularity_desc ASC, id ASC LIMIT ? OFFSET ?";
   const countprefix = "SELECT COUNT(*) as count FROM estate WHERE ";
 
   const getConnection = promisify(db.getConnection.bind(db));
@@ -472,7 +473,7 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
   const query = promisify(connection.query.bind(connection));
   try {
     const estates = await query(
-      "SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY popularity DESC, id ASC",
+      "SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY popularity_desc ASC, id ASC",
       [
         boundingbox.bottomright.latitude,
         boundingbox.topleft.latitude,
@@ -565,7 +566,7 @@ app.get("/api/recommended_estate/:id", async (req, res, next) => {
     const h = chair.height;
     const d = chair.depth;
     const es = await query(
-      "SELECT * FROM estate where (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) ORDER BY popularity DESC, id ASC LIMIT ?",
+      "SELECT * FROM estate where (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) ORDER BY popularity_desc ASC, id ASC LIMIT ?",
       [w, h, w, d, h, w, h, d, d, w, d, h, LIMIT]
     );
     const estates = es.map((estate) => camelcaseKeys(estate));
@@ -622,8 +623,8 @@ app.post("/api/estate", upload.single("estates"), async (req, res, next) => {
     for (var i = 0; i < csv.length; i++) {
       const items = csv[i];
       await query(
-        "INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-        items
+        "INSERT INTO estate(id, name, description, thumbnail, address, latitude, longitude, rent, door_height, door_width, features, popularity, popularity_desc) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        [...items, -items[11]]
       );
     }
     await commit();
