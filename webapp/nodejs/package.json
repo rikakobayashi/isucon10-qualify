@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
+    "start": "MYSQL_HOST=172.31.1.199 node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
