@@ -470,25 +470,26 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
-    // const estates = await query(
-    //   "SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY popularity DESC, id ASC",
-    //   [
-    //     boundingbox.bottomright.latitude,
-    //     boundingbox.topleft.latitude,
-    //     boundingbox.bottomright.longitude,
-    //     boundingbox.topleft.longitude,
-    //   ]
-    // );
+    const estates = await query(
+      "SELECT * FROM estate WHERE latitude <= ? AND latitude >= ? AND longitude <= ? AND longitude >= ? ORDER BY popularity DESC, id ASC",
+      [
+        boundingbox.bottomright.latitude,
+        boundingbox.topleft.latitude,
+        boundingbox.bottomright.longitude,
+        boundingbox.topleft.longitude,
+      ]
+    );
 
     // const estatesInPolygon = [];
     // for (const estate of estates) {
-    const point = util.format(
-      "'POINT(%f %f)'",
-      estate.latitude,
-      estate.longitude
-    );
+    const estateIds = estates.map(estate => estate.id)
+    // const point = util.format(
+    //   "'POINT(%f %f)'",
+    //   estate.latitude,
+    //   estate.longitude
+    // );
     const sql =
-      "SELECT * FROM estate WHERE AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(%s))";
+      "SELECT * FROM estate WHERE estate.id in (%s) AND ST_Contains(ST_PolygonFromText(%s), ST_GeomFromText(concat(\"POINT(\", estate.latitude, \" \",estate.longitude, \")\")))";
     const coordinatesToText = util.format(
       "'POLYGON((%s))'",
       coordinates
@@ -497,7 +498,9 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
         )
         .join(",")
     );
-    const sqlstr = util.format(sql, coordinatesToText, point);
+    // const sqlstr = util.format(sql, coordinatesToText, point);
+    const sqlstr = util.format(sql, estateIds.join(","), coordinatesToText);
+    // console.log({sqlstr})
     const estatesInPolygon = await query(sqlstr);
     // if ( && Object.keys(e).length > 0) {
     //   estatesInPolygon.push(e);
