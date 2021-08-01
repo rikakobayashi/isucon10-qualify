@@ -23,6 +23,16 @@ CREATE TABLE isuumo.estate
 
 ALTER TABLE isuumo.estate ADD INDEX esate_popularity(popularity);
 
+-- get api/estate/search
+-- where: door_height, door_width, rent, features
+-- order by: popularity, id
+
+ALTER TABLE isuumo.estate ADD INDEX esate_door_height(door_height);
+ALTER TABLE isuumo.estate ADD INDEX esate_door_width(door_width);
+ALTER TABLE isuumo.estate ADD INDEX esate_rent(rent);
+ALTER TABLE isuumo.estate ADD INDEX esate_features(features);
+
+
 CREATE TABLE isuumo.chair
 (
     id          INTEGER         NOT NULL PRIMARY KEY,
@@ -39,3 +49,17 @@ CREATE TABLE isuumo.chair
     popularity  INTEGER         NOT NULL,
     stock       INTEGER         NOT NULL
 );
+
+-- get api/chair/search
+-- where: price, height, width, depth, kind, color, features, stock
+-- order by: popularity, id
+
+ALTER TABLE isuumo.chair ADD INDEX chair_price(price);
+ALTER TABLE isuumo.chair ADD INDEX chair_height(height);
+ALTER TABLE isuumo.chair ADD INDEX chair_width(width);
+ALTER TABLE isuumo.chair ADD INDEX chair_depth(depth);
+ALTER TABLE isuumo.chair ADD INDEX chair_kind(kind);
+ALTER TABLE isuumo.chair ADD INDEX chair_color(color);
+ALTER TABLE isuumo.chair ADD INDEX chair_features(features);
+ALTER TABLE isuumo.chair ADD INDEX chair_stock(stock);
+ALTER TABLE isuumo.chair ADD INDEX chair_popularity(popularity);
