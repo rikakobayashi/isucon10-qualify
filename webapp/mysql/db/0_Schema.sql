@@ -68,5 +68,3 @@ ALTER TABLE isuumo.chair ADD INDEX chair_color(color);
 ALTER TABLE isuumo.chair ADD INDEX chair_features(features);
 ALTER TABLE isuumo.chair ADD INDEX chair_stock(stock);
 ALTER TABLE isuumo.chair ADD INDEX chair_popularity(popularity);
-
-
