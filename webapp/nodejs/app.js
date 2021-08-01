@@ -41,7 +41,7 @@ app.post("/initialize", async (req, res, next) => {
     const dbfiles = [
       "0_Schema.sql",
       "1_DummyEstateData.sql",
-      "2_DummyChairData.sql",
+      "2_DummyChairData.sql"
     ];
     const execfiles = dbfiles.map((file) => path.join(dbdir, file));
     for (const execfile of execfiles) {
